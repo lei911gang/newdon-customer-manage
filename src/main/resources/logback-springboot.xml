@@ -1,0 +1,55 @@
+<!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
+<configuration scan="true" scanPeriod="10 seconds">
+	<!--  <include resource="org/springframework/boot/logging/logback/base.xml" /> -->
+	<!-- 日志根目录-->
+	<springProperty scope="context" name="LOG_PATH" source="logging.path"/>
+	<timestamp key="DATE" datePattern="yyyy-MM-dd"/>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date [%level] [requestUUID:%X{requestUUID}] [%file : %line] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/info.log</file>
+		<encoder>
+			<pattern>%date [%level] [requestUUID:%X{requestUUID}] [%file : %line] %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/info.${DATE}.%i.log.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>500</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>256MB</maxFileSize>
+		</triggeringPolicy>
+	</appender>
+
+	<appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/error.log</file>
+		<encoder>
+			<pattern>%date [%level] [requestUUID:%X{requestUUID}] [%file : %line] %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/error.${DATE}.%i.log.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>500</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>256MB</maxFileSize>
+		</triggeringPolicy>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="INFO_FILE" />
+		<appender-ref ref="ERROR_FILE"/>
+	</root>
+
+</configuration>

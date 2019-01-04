@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class BasicTechInfoController {
     @Autowired
     private BasicTechInfoService basicTechInfoService;
-    @Autowired
-    private NewdonContractService newdonContractService;
 
     @RequestMapping("add")
     public String add() {
