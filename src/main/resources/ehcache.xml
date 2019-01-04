@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+    updateCheck="false">
+  
+  	<!-- diskStore：ehcache其实是支持内存+磁盘+堆外内存，几个层级的缓存 -->
+    <diskStore path="java.io.tmpdir/Tmp_EhCache" />
+    
+    <!-- defaultCache，是默认的缓存策略 -->
+    <defaultCache
+        eternal="false"
+        maxElementsInMemory="10000"
+        overflowToDisk="false"
+        diskPersistent="false"
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="0"
+        memoryStoreEvictionPolicy="LRU" />
+ 
+ 	<!-- 手动指定的缓存策略 -->
+    <cache
+        name="local"  
+        eternal="false"
+        maxElementsInMemory="10000"
+        overflowToDisk="false"
+        diskPersistent="false"
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="0"
+        memoryStoreEvictionPolicy="LRU" />
+
+</ehcache>
