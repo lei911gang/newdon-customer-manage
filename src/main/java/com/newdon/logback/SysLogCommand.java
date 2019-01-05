@@ -1,16 +1,16 @@
 package com.newdon.logback;
 
 import com.netflix.hystrix.*;
-import com.newdon.entity.SysLog;
+import com.newdon.entity.SystemLog;
 import com.newdon.mapper.SysLogMapper;
 
 public class SysLogCommand extends HystrixCommand<Boolean> {
     private SysLogMapper sysLogMapper;
 
     public static final HystrixCommandKey COMMAND_KEY = HystrixCommandKey.Factory.asKey("SysLogCommand");
-    private SysLog sysLog;
+    private SystemLog sysLog;
 
-    public SysLogCommand(SysLogMapper sysLogMapper, SysLog sysLog) {
+    public SysLogCommand(SysLogMapper sysLogMapper, SystemLog sysLog) {
         super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("SysLog"))
                 .andCommandKey(COMMAND_KEY)
                 .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("SysLogPool"))

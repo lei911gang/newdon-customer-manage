@@ -3,7 +3,7 @@ package com.newdon.logback;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.newdon.constants.CommonConstants;
-import com.newdon.entity.SysLog;
+import com.newdon.entity.SystemLog;
 import com.newdon.mapper.SysLogMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -43,12 +43,8 @@ public class LogAspect {
     private static final String STRING_START = "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
     private static final String STRING_END = "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n";
 
-    @Pointcut("execution(* com.hs.controller..*(..))")
+    @Pointcut("execution(* com.newdon.controller..*(..))")
     public void controllerLog() {
-    }
-
-    @Pointcut("execution(* com.hs.rabbitmq..*(..))")
-    public void rabbitmqLog() {
     }
 
     @Around("controllerLog()")
@@ -103,7 +99,7 @@ public class LogAspect {
         }
         LOG.info("RETURN : " + param);
         LOG.info("\n调用结束<-- {} 耗时:{}ms" + STRING_END, target, timeConsuming);
-        SysLog sysLog = getSysLog(request);
+        SystemLog sysLog = getSysLog(request);
         if (StringUtils.isNotBlank(sysLog.getOperationType()) && StringUtils.isNotBlank(sysLog.getOperationProject())) {
             if (map.size() > 0) {
                 sysLog.setArgs(map.toString());
@@ -116,9 +112,9 @@ public class LogAspect {
         return result;
     }
 
-    public SysLog getSysLog(HttpServletRequest request) {
+    public SystemLog getSysLog(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
-        SysLog sysLog = new SysLog();
+        SystemLog sysLog = new SystemLog();
         sysLog.setTime(System.currentTimeMillis());
         String username = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
                 .getHeader("username");
@@ -154,41 +150,5 @@ public class LogAspect {
         sysLog.setHttpMethod(request.getMethod());
         sysLog.setIp(request.getRemoteAddr());
         return sysLog;
-    }
-
-    @Around("rabbitmqLog()")
-    public Object rabbitmqLog(ProceedingJoinPoint joinPoint) {
-        try {
-
-            String requestUUID = MDC.get("requestUUID");
-            if (requestUUID == null || "".equals(requestUUID)) {
-                String uuid = UUID.randomUUID().toString();
-                uuid = uuid.replaceAll("-", "").toUpperCase();
-                MDC.put("requestUUID", uuid);
-                LOG.info("around 在请求处理之前生成 logback requestUUID:{}", uuid);
-            }
-
-            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-            Method method = signature.getMethod();
-            Class<?> targetClass = method.getDeclaringClass();
-
-            StringBuffer classAndMethod = new StringBuffer();
-
-
-            String target = targetClass.getName() + "#" + method.getName();
-            String params = JSONObject.toJSONStringWithDateFormat(joinPoint.getArgs(), DATE_FORMAT, SerializerFeature.WriteMapNullValue);
-
-            LOG.info(STRING_START + "{} 开始调用--> {} 参数:{}", classAndMethod.toString(), target, params);
-
-            long start = System.currentTimeMillis();
-            Object result = joinPoint.proceed();
-            long timeConsuming = System.currentTimeMillis() - start;
-
-            LOG.info("\n{} 调用结束<-- {} 返回值:{} 耗时:{}ms" + STRING_END, classAndMethod.toString(), target, JSONObject.toJSONStringWithDateFormat(result, DATE_FORMAT, SerializerFeature.WriteMapNullValue), timeConsuming);
-            return result;
-        } catch (Throwable throwable) {
-            LOG.error(throwable.getMessage(), throwable);
-        }
-        return null;
     }
 }
