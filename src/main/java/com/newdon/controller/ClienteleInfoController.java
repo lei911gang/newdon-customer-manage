@@ -39,6 +39,7 @@ public class ClienteleInfoController {
         if (null == rows || rows < 0) {
             rows = 10;
         }
+        System.out.println("6666");
         clienteleInfo.setStatus(1);
         EntityWrapper<ClienteleInfo> wrapper = new EntityWrapper();
 //        wrapper.setEntity(clienteleInfo);
