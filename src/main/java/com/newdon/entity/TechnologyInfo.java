@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.github.wxiaoqi.merge.annonation.MergeField;
+import com.newdon.service.TechnologyInfoService;
 import com.newdon.service.impl.TechnologyInfoServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,10 +28,10 @@ public class TechnologyInfo implements Serializable {
 	private String technicist;
 	private String basicEnvironment;
 	//该字段存储为合同ID contractId
-	@MergeField(feign = TechnologyInfoServiceImpl.class,method = "getSystemLevelAndQuantity",isValueNeedMerge = true)
+	@MergeField(feign = TechnologyInfoService.class,method = "getSystemLevelAndQuantity",isValueNeedMerge = true)
 	private String systemLevelAndQuantity;
 	//该字段存储为合同ID contractId
-	@MergeField(feign = TechnologyInfoServiceImpl.class,method = "getDeviceInformationAndQuantity",isValueNeedMerge = true)
+	@MergeField(feign = TechnologyInfoService.class,method = "getDeviceInformationAndQuantity",isValueNeedMerge = true)
 	private String deviceInformationAndQuantity;
 	private Long dateReleased;
 	private String remark;

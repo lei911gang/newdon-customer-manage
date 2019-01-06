@@ -5,9 +5,17 @@ logging:
 server:
   port: 80
 debug: false
+# 跨服务数据合并
+merge:
+  enabled: true
+  guavaCacheNumMaxSize: 1000
+  guavaCacheRefreshWriteTime: 10 # min
+  guavaCacheRefreshThreadPoolSize: 10
+  aop: # 启动注解的方式,自动聚合
+    enabled: true
 spring:
   application:
-    name: com.newdon-contract
+    name: newdon
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -19,14 +27,14 @@ spring:
     password: root123
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
-  thymeleaf:
-    mode: HTML5
-    encoding: UTF-8
-    cache: false
-    servlet:
-      content-type: text/html
-    prefix: classpath:/templates/
-    suffix: .html
+#  thymeleaf:
+#    mode: HTML5
+#    encoding: UTF-8
+#    cache: false
+#    servlet:
+#      content-type: text/html
+#    prefix: classpath:/templates/
+#    suffix: .html
   servlet:
     multipart:
       max-file-size: 10MB
