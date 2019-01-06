@@ -31,7 +31,7 @@ public class TechnologyInfoController {
     private TechnologyInfoService technologyInfoService;
     @Autowired
     private MergeCore mergeCore;
-    @GetMapping(value = "/query")
+    @PostMapping(value = "/query")
     public Result query(TechnologyInfo technologyInfo, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;

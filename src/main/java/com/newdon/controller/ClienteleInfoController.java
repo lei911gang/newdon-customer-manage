@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
  **/
 
 @RequestMapping("/newdon/clienteleInfo")
-@CrossOrigin
 @RestController
 @Slf4j
 public class ClienteleInfoController {
@@ -31,7 +30,6 @@ public class ClienteleInfoController {
     private ClienteleInfoService clienteleInfoService;
 
 	@PostMapping(value = "/query")
-    @ResponseBody
     public Result query(ClienteleInfo clienteleInfo, Integer page, Integer rows){
         if (null == page || page < 0) {
             page = 1;
@@ -51,7 +49,6 @@ public class ClienteleInfoController {
     }
 
 	@PostMapping(value = "/insert")
-    @ResponseBody
     public Result insert(@Validated(Insert.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return Result.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
@@ -66,7 +63,6 @@ public class ClienteleInfoController {
     }
 
 	@PostMapping(value = "/update")
-    @ResponseBody
     public Result update(@Validated(Update.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return Result.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
@@ -80,7 +76,6 @@ public class ClienteleInfoController {
     }
 
 	@PostMapping(value = "/delete")
-    @ResponseBody
     public Result delete(@RequestParam("id") Long id){
         ClienteleInfo clienteleInfo = new ClienteleInfo();
         clienteleInfo.setId(id);

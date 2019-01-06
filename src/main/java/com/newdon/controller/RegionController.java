@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
  **/
 
 @RequestMapping("/newdon/region")
-@CrossOrigin
 @RestController
 @Slf4j
 public class RegionController {
@@ -30,7 +29,6 @@ public class RegionController {
     private RegionService regionService;
 
     @PostMapping(value = "/query")
-    @ResponseBody
     public Result query(Region region, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
@@ -45,7 +43,6 @@ public class RegionController {
     }
 
     @PostMapping(value = "/insert")
-    @ResponseBody
     public Result insert(@Validated(Insert.class) @RequestBody Region region, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
@@ -59,7 +56,6 @@ public class RegionController {
     }
 
     @PostMapping(value = "/update")
-    @ResponseBody
     public Result update(@Validated(Update.class) @RequestBody Region region, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
@@ -73,7 +69,6 @@ public class RegionController {
     }
 
     @PostMapping(value = "/delete")
-    @ResponseBody
     public Result delete(@RequestParam("id") Long id) {
         boolean b = this.regionService.deleteById(id);
         if (b) {
