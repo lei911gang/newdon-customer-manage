@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
  **/
 
 @RequestMapping("/newdon/systemLevelAndQuantity")
-@CrossOrigin
 @RestController
 @Slf4j
 public class SystemLevelAndQuantityController {
@@ -30,7 +29,6 @@ public class SystemLevelAndQuantityController {
     private SystemLevelAndQuantityService systemLevelAndQuantityService;
 
     @PostMapping(value = "/query")
-    @ResponseBody
     public Result query(SystemLevelAndQuantity systemLevelAndQuantity, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
@@ -45,7 +43,6 @@ public class SystemLevelAndQuantityController {
     }
 
     @PostMapping(value = "/insert")
-    @ResponseBody
     public Result insert(@Validated(Insert.class) @RequestBody SystemLevelAndQuantity systemLevelAndQuantity, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
@@ -59,7 +56,6 @@ public class SystemLevelAndQuantityController {
     }
 
     @PostMapping(value = "/update")
-    @ResponseBody
     public Result update(@Validated(Update.class) @RequestBody SystemLevelAndQuantity systemLevelAndQuantity, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
@@ -73,7 +69,6 @@ public class SystemLevelAndQuantityController {
     }
 
     @PostMapping(value = "/delete")
-    @ResponseBody
     public Result delete(@RequestParam("id") Long id) {
         boolean b = this.systemLevelAndQuantityService.deleteById(id);
         if (b) {

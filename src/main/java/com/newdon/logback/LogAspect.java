@@ -136,6 +136,11 @@ public class LogAspect {
             case "login":
                 sysLog.setOperationType("登录");
                 break;
+            case "query":
+                sysLog.setOperationType("查询");
+                break;
+            default:
+                sysLog.setOperationType("其他");
         }
         String projectName = list.get(list.size() - 2);
         switch (projectName) {
@@ -145,6 +150,8 @@ public class LogAspect {
             case "userDevice":
                 sysLog.setOperationProject("智能卫士子系统用户设备");
                 break;
+            default:
+                sysLog.setOperationProject("其他");
         }
         sysLog.setUrl(url);
         sysLog.setHttpMethod(request.getMethod());
