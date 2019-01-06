@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 /**
  * @author LeiGang
@@ -36,6 +37,15 @@ public class ContractInfo implements Serializable {
 	private Long clienteleId;
 	private String remark;
 	private Integer status;
+
+	@TableField(exist = false)
+	private ClienteleInfo clienteleInfo;
+	@TableField(exist = false)
+	private TechnologyInfo technologyInfo;
+	@TableField(exist = false)
+	private List<SystemLevelAndQuantity> systemLevelAndQuantities;
+	@TableField(exist = false)
+	private List<DeviceInformationAndQuantity> deviceInformationAndQuantities;
 
 	@TableField(exist = false)
 	private Date dateOfSignatureStart;
