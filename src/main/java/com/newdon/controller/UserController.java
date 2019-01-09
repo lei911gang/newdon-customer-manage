@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.Session;
 
 /**
  * @author LeiGang
@@ -48,16 +49,17 @@ public class UserController {
 
     @GetMapping(value = "/getCurrentUser")
     public Result getCurrentUser(HttpServletRequest httpServletRequest){
+        System.out.println(httpServletRequest.getSession().getAttribute("username"));
         if(null == httpServletRequest.getSession().getAttribute("username")){
             return Result.build(400,"OK",0 ,false);
         }
         return Result.build(200,"OK",httpServletRequest.getSession().getAttribute("username"));
     }
 
-    @PostMapping(value = "/logout")
+    @GetMapping(value = "/logout")
     public Result logout(HttpServletRequest request) {
         request.getSession().removeAttribute("username");
         request.getSession().removeAttribute("name");
-        return Result.build(200, "OK", null);
+        return Result.build(200, "账户失效！请重新登录！", 0,false);
     }
 }
