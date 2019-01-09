@@ -9,12 +9,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author LeiGang
@@ -46,6 +44,14 @@ public class UserController {
         request.getSession().setAttribute("username", username);
         request.getSession().setAttribute("name", user.getName());
         return Result.build(200, "OK", username);
+    }
+
+    @GetMapping(value = "/getCurrentUser")
+    public Result getCurrentUser(HttpServletRequest httpServletRequest){
+        if(null == httpServletRequest.getSession().getAttribute("username")){
+            return Result.build(400,"OK",0 ,false);
+        }
+        return Result.build(200,"OK",httpServletRequest.getSession().getAttribute("username"));
     }
 
     @PostMapping(value = "/logout")
