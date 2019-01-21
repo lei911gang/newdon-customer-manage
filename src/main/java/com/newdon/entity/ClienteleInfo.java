@@ -25,9 +25,9 @@ public class ClienteleInfo implements Serializable {
     private String linkman;
     private String contact;
     private String clienteleCategory;
-    private Long clienteleRegion;
-    private Long clienteleTrade;
-    private Long subdivideTrade;
+    private String clienteleRegion;
+    private String clienteleTrade;
+    private String subdivideTrade;
     private String tradeProperty;
     private String remark;
     private Integer status;

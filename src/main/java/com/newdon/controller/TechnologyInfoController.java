@@ -10,6 +10,7 @@ import com.newdon.base.Update;
 import com.newdon.entity.TechnologyInfo;
 import com.newdon.service.TechnologyInfoService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -39,9 +40,18 @@ public class TechnologyInfoController {
         if (null == rows || rows < 0) {
             rows = 10;
         }
-        technologyInfo.setStatus(1);
+//        technologyInfo.setStatus(1);
         EntityWrapper<TechnologyInfo> wrapper = new EntityWrapper();
-        wrapper.setEntity(technologyInfo);
+        wrapper.eq("status", 1);
+        if (StringUtils.isNotBlank(technologyInfo.getContractId())) {
+            wrapper.like("contract_id", technologyInfo.getContractId());
+        }
+        if (StringUtils.isNotBlank(technologyInfo.getProjectManager())) {
+            wrapper.like("project_manager", technologyInfo.getProjectManager());
+        }
+        if (StringUtils.isNotBlank(technologyInfo.getTechnicist())) {
+            wrapper.like("technicist", technologyInfo.getTechnicist());
+        }
         Page<TechnologyInfo> pageInfo = this.technologyInfoService.selectPage(new Page<>(page, rows), wrapper);
         try {
             if (!pageInfo.getRecords().isEmpty()) {

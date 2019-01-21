@@ -37,13 +37,26 @@ public class ClienteleInfoController {
         if (null == rows || rows < 0) {
             rows = 10;
         }
-        System.out.println("6666");
-        clienteleInfo.setStatus(1);
+//        clienteleInfo.setStatus(1);
         EntityWrapper<ClienteleInfo> wrapper = new EntityWrapper();
-//        wrapper.setEntity(clienteleInfo);
-        //TODO 模糊查询示例
+        wrapper.eq("status", 1);
+        if (StringUtils.isNotBlank(clienteleInfo.getClienteleName())) {
+            wrapper.like("clientele_name", clienteleInfo.getClienteleName());
+        }
         if (StringUtils.isNotBlank(clienteleInfo.getClienteleCategory())) {
-            wrapper.like("clientele_category", clienteleInfo.getClienteleCategory());
+            wrapper.eq("clientele_category", clienteleInfo.getClienteleCategory());
+        }
+        if (StringUtils.isNotBlank(clienteleInfo.getClienteleRegion())) {
+            wrapper.eq("clientele_region", clienteleInfo.getClienteleRegion());
+        }
+        if (StringUtils.isNotBlank(clienteleInfo.getClienteleTrade())) {
+            wrapper.eq("clientele_trade", clienteleInfo.getClienteleTrade());
+        }
+        if (StringUtils.isNotBlank(clienteleInfo.getSubdivideTrade())) {
+            wrapper.eq("subdivide_trade", clienteleInfo.getSubdivideTrade());
+        }
+        if (StringUtils.isNotBlank(clienteleInfo.getTradeProperty())) {
+            wrapper.eq("trade_property", clienteleInfo.getTradeProperty());
         }
         Page<ClienteleInfo> pageInfo = this.clienteleInfoService.selectPage(new Page<>(page, rows), wrapper);
         return Result.build(200, "OK", pageInfo);
