@@ -23,7 +23,7 @@ import java.io.Serializable;
 public class TechnologyInfo implements Serializable {
 	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
-	private Long contractId;
+	private String contractId;
 	private String projectManager;
 	private String technicist;
 	private String basicEnvironment;

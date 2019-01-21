@@ -24,17 +24,17 @@ import java.util.List;
 public class ContractInfo implements Serializable {
 	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
-	private Long contractId;
-	private Long contractCategory;
+	private String contractId;
+	private String contractCategory;
 	private Long dateOfSignature;
 	private String businessPersonnel;
-	private Long contractSum;
+	private Double contractSum;
 	private Integer serviceContent;
 	private String incrementOfStockNumber;
-	private String newsfrom;
+	private String newsFrom;
 	private String cooperativeEvaluator;
 	private Long procurementMethod;
-	private Long clienteleId;
+	private String clienteleName;
 	private String remark;
 	private Integer status;
 
@@ -48,11 +48,11 @@ public class ContractInfo implements Serializable {
 	private List<DeviceInformationAndQuantity> deviceInformationAndQuantities;
 
 	@TableField(exist = false)
-	private Date dateOfSignatureStart;
+	private Long dateOfSignatureStart;
 	@TableField(exist = false)
-	private Date dateOfSignatureEnd;
+	private Long dateOfSignatureStop;
 	@TableField(exist = false)
-	private Double contractSumStart;
+	private Double contractSumBegin;
 	@TableField(exist = false)
 	private Double contractSumEnd;
 }

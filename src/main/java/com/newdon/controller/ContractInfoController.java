@@ -2,29 +2,30 @@ package com.newdon.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.newdon.base.ContractInsertException;
 import com.newdon.base.Insert;
 import com.newdon.base.Result;
 import com.newdon.base.Update;
+import com.newdon.constants.CommonConstants;
 import com.newdon.entity.*;
 import com.newdon.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Map;
 
 /**
- * @version 1.0
- * @ClassName ContractInfoService
- * @Auther: Dong
- * @Date: 2018/11/29 10:30
- * @Description: TODO
+ * @author LeiGang
+ * @create 2019/1/21 11:37
+ * @description
  **/
-
 @RequestMapping("/newdon/contractInfo")
 @RestController
 @Slf4j
@@ -48,14 +49,55 @@ public class ContractInfoController {
         if (null == rows || rows < 0) {
             rows = 10;
         }
-        contractInfo.setStatus(1);
+//        contractInfo.setStatus(1);
         EntityWrapper<ContractInfo> wrapper = new EntityWrapper();
-//        wrapper.setEntity(contractInfo);
+        wrapper.eq("status", 1);
+        if (StringUtils.isNotBlank(contractInfo.getContractId())) {
+            wrapper.like("contract_id", contractInfo.getContractId());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getContractCategory())) {
+            wrapper.eq("contract_category", contractInfo.getContractCategory());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getBusinessPersonnel())) {
+            wrapper.like("business_personnel", contractInfo.getBusinessPersonnel());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getIncrementOfStockNumber())) {
+            wrapper.eq("increment_of_stock_number", contractInfo.getIncrementOfStockNumber());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getNewsFrom())) {
+            wrapper.eq("news_from", contractInfo.getNewsFrom());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getCooperativeEvaluator())) {
+            wrapper.eq("cooperative_evaluator", contractInfo.getCooperativeEvaluator());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getBusinessPersonnel())) {
+            wrapper.like("business_personnel", contractInfo.getBusinessPersonnel());
+        }
+        if (StringUtils.isNotBlank(contractInfo.getClienteleName())) {
+            wrapper.like("clientele_name", contractInfo.getClienteleName());
+        }
         //TODO 范围查询示例（时间段和数字）
-        if (null != contractInfo.getDateOfSignature() && null != contractInfo.getDateOfSignatureEnd()) {
-            wrapper.between("date_of_signature", contractInfo.getDateOfSignature(), contractInfo.getDateOfSignatureEnd());
+        if (null != contractInfo.getDateOfSignatureStart() && null != contractInfo.getDateOfSignatureStop()) {
+            wrapper.between("date_of_signature", contractInfo.getDateOfSignatureStart(), contractInfo.getDateOfSignatureStop());
+        }
+        if (null != contractInfo.getContractSumBegin() && null != contractInfo.getContractSumEnd()) {
+            wrapper.between("contract_sum", contractInfo.getContractSumBegin(), contractInfo.getContractSumEnd());
         }
         Page<ContractInfo> pageInfo = this.contractInfoService.selectPage(new Page<>(page, rows), wrapper);
+        //总金额和平均金额
+        List<ContractInfo> records = pageInfo.getRecords();
+        Double sum = 0.0;
+        Double average = 0.0;
+        if (null != records && records.size() > 0) {
+            for (ContractInfo contract : records) {
+                sum = sum + contract.getContractSum();
+            }
+            average = sum / (records.size());
+        }
+        Map<String, Object> map = new HashMap(2);
+        map.put("sum", sum);
+        map.put("average", average);
+        pageInfo.setCondition(map);
         return Result.build(200, "OK", pageInfo);
     }
 
@@ -68,14 +110,21 @@ public class ContractInfoController {
         }
         ClienteleInfo clienteleInfo = contractInfo.getClienteleInfo();
         clienteleInfo.setStatus(1);
-        this.clienteleInfoService.insert(clienteleInfo);
+        boolean insert = this.clienteleInfoService.insert(clienteleInfo);
+        if (!insert) {
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert clienteleInfo failed!");
+        }
         contractInfo.setStatus(1);
-        contractInfo.setClienteleId(clienteleInfo.getId());
-        this.contractInfoService.insert(contractInfo);
+        boolean insert1 = this.contractInfoService.insert(contractInfo);
+        if (!insert1) {
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert contractInfo failed!");
+        }
         TechnologyInfo technologyInfo = contractInfo.getTechnologyInfo();
-        technologyInfo.setContractId(contractInfo.getId());
         technologyInfo.setStatus(1);
-        this.technologyInfoService.insert(contractInfo.getTechnologyInfo());
+        boolean insert2 = this.technologyInfoService.insert(technologyInfo);
+        if (!insert2) {
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert technologyInfo failed!");
+        }
         List<SystemLevelAndQuantity> systemLevelAndQuantities = contractInfo.getSystemLevelAndQuantities();
         List<DeviceInformationAndQuantity> deviceInformationAndQuantities = contractInfo.getDeviceInformationAndQuantities();
         for (SystemLevelAndQuantity s : systemLevelAndQuantities) {
@@ -84,8 +133,14 @@ public class ContractInfoController {
         for (DeviceInformationAndQuantity s : deviceInformationAndQuantities) {
             s.setContractId(contractInfo.getId());
         }
-        this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
-        this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
+        boolean b = this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
+        if (!b) {
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert systemLevelAndQuantities failed!");
+        }
+        boolean b1 = this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
+        if (!b1) {
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert deviceInformationAndQuantities failed!");
+        }
         //插入客户信息和技术信息，以及系统级别和数量，设备信息和数量
         return Result.build(200, "OK", contractInfo.getId());
     }

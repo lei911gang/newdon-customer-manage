@@ -21,6 +21,7 @@ import java.io.Serializable;
 public class ClienteleInfo implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+    private String clienteleName;
     private String linkman;
     private String contact;
     private String clienteleCategory;
