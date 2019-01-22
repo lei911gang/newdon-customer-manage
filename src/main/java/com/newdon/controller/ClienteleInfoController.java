@@ -3,7 +3,7 @@ package com.newdon.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.newdon.base.Insert;
-import com.newdon.base.Result;
+import com.newdon.base.NewDonResult;
 import com.newdon.base.Update;
 import com.newdon.entity.ClienteleInfo;
 import com.newdon.service.ClienteleInfoService;
@@ -30,7 +30,7 @@ public class ClienteleInfoController {
     private ClienteleInfoService clienteleInfoService;
 
 	@PostMapping(value = "/query")
-    public Result query(ClienteleInfo clienteleInfo, Integer page, Integer rows){
+    public NewDonResult query(ClienteleInfo clienteleInfo, Integer page, Integer rows){
         if (null == page || page < 0) {
             page = 1;
         }
@@ -59,46 +59,46 @@ public class ClienteleInfoController {
             wrapper.eq("trade_property", clienteleInfo.getTradeProperty());
         }
         Page<ClienteleInfo> pageInfo = this.clienteleInfoService.selectPage(new Page<>(page, rows), wrapper);
-        return Result.build(200, "OK", pageInfo);
+        return NewDonResult.build(200, "OK", pageInfo);
     }
 
 	@PostMapping(value = "/insert")
-    public Result insert(@Validated(Insert.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
+    public NewDonResult insert(@Validated(Insert.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return Result.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
+            return NewDonResult.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
         }
         clienteleInfo.setStatus(1);
         boolean insert = this.clienteleInfoService.insert(clienteleInfo);
         if (insert) {
-            return Result.build(200, "OK", clienteleInfo.getId());
+            return NewDonResult.build(200, "OK", clienteleInfo.getId());
         } else {
-            return Result.build(500, "FAILED",null);
+            return NewDonResult.build(500, "FAILED",null);
         }
     }
 
 	@PostMapping(value = "/update")
-    public Result update(@Validated(Update.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
+    public NewDonResult update(@Validated(Update.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return Result.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
+            return NewDonResult.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
         }
         boolean b = this.clienteleInfoService.updateById(clienteleInfo);
         if (b) {
-            return Result.build(200, "OK", clienteleInfo.getId());
+            return NewDonResult.build(200, "OK", clienteleInfo.getId());
         } else {
-            return Result.build(500, "FAILED",null);
+            return NewDonResult.build(500, "FAILED",null);
         }
     }
 
 	@PostMapping(value = "/delete")
-    public Result delete(@RequestParam("id") Long id){
+    public NewDonResult delete(@RequestParam("id") Long id){
         ClienteleInfo clienteleInfo = new ClienteleInfo();
         clienteleInfo.setId(id);
         clienteleInfo.setStatus(0);
         boolean b = this.clienteleInfoService.updateById(clienteleInfo);
         if (b) {
-            return Result.build(200, "OK", clienteleInfo.getId());
+            return NewDonResult.build(200, "OK", clienteleInfo.getId());
         } else {
-            return Result.build(500, "FAILED",null);
+            return NewDonResult.build(500, "FAILED",null);
         }
     }
 }

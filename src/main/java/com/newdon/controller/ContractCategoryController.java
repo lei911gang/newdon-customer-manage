@@ -2,7 +2,7 @@ package com.newdon.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.newdon.base.Result;
+import com.newdon.base.NewDonResult;
 import com.newdon.entity.ContractCategory;
 import com.newdon.service.ContractCategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class ContractCategoryController {
     private ContractCategoryService contractCategoryService;
 
     @PostMapping(value = "/query")
-    public Result query(ContractCategory contractCategory, Integer page, Integer rows) {
+    public NewDonResult query(ContractCategory contractCategory, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
         }
@@ -36,6 +36,6 @@ public class ContractCategoryController {
         EntityWrapper<ContractCategory> wrapper = new EntityWrapper();
         wrapper.setEntity(contractCategory);
         Page<ContractCategory> pageInfo = this.contractCategoryService.selectPage(new Page<>(page, rows), wrapper);
-        return Result.build(200, "OK", pageInfo);
+        return NewDonResult.build(200, "OK", pageInfo);
     }
 }

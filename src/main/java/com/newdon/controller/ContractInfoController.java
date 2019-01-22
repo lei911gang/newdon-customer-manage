@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.newdon.base.ContractInsertException;
 import com.newdon.base.Insert;
-import com.newdon.base.Result;
+import com.newdon.base.NewDonResult;
 import com.newdon.base.Update;
 import com.newdon.constants.CommonConstants;
 import com.newdon.entity.*;
@@ -17,9 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author LeiGang
@@ -42,7 +40,7 @@ public class ContractInfoController {
     private DeviceInformationAndQuantityService deviceInformationAndQuantityService;
 
     @PostMapping(value = "/query")
-    public Result query(ContractInfo contractInfo, Integer page, Integer rows) {
+    public NewDonResult query(ContractInfo contractInfo, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
         }
@@ -94,36 +92,32 @@ public class ContractInfoController {
             }
             average = sum / (records.size());
         }
-        Map<String, Object> map = new HashMap(2);
-        map.put("sum", sum);
-        map.put("average", average);
-        pageInfo.setCondition(map);
-        return Result.build(200, "OK", pageInfo);
+        return NewDonResult.build(200, "OK", pageInfo, sum, average);
     }
 
     @PostMapping(value = "/insert")
     @Transactional(rollbackFor = Exception.class)
     //TODO 不仅要插入合同信息，还需要插入客户信息和技术信息，以及系统级别和数量，设备信息和数量，多张表
-    public Result insert(@Validated(Insert.class) @RequestBody ContractInfo contractInfo, BindingResult bindingResult) {
+    public NewDonResult insert(@Validated(Insert.class) @RequestBody ContractInfo contractInfo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
+            return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
         ClienteleInfo clienteleInfo = contractInfo.getClienteleInfo();
         clienteleInfo.setStatus(1);
         boolean insert = this.clienteleInfoService.insert(clienteleInfo);
         if (!insert) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert clienteleInfo failed!");
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert clienteleInfo failed!");
         }
         contractInfo.setStatus(1);
         boolean insert1 = this.contractInfoService.insert(contractInfo);
         if (!insert1) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert contractInfo failed!");
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert contractInfo failed!");
         }
         TechnologyInfo technologyInfo = contractInfo.getTechnologyInfo();
         technologyInfo.setStatus(1);
         boolean insert2 = this.technologyInfoService.insert(technologyInfo);
         if (!insert2) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert technologyInfo failed!");
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert technologyInfo failed!");
         }
         List<SystemLevelAndQuantity> systemLevelAndQuantities = contractInfo.getSystemLevelAndQuantities();
         List<DeviceInformationAndQuantity> deviceInformationAndQuantities = contractInfo.getDeviceInformationAndQuantities();
@@ -135,39 +129,39 @@ public class ContractInfoController {
         }
         boolean b = this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
         if (!b) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert systemLevelAndQuantities failed!");
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert systemLevelAndQuantities failed!");
         }
         boolean b1 = this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
         if (!b1) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE,"insert deviceInformationAndQuantities failed!");
+            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert deviceInformationAndQuantities failed!");
         }
         //插入客户信息和技术信息，以及系统级别和数量，设备信息和数量
-        return Result.build(200, "OK", contractInfo.getId());
+        return NewDonResult.build(200, "OK", contractInfo.getId());
     }
 
     @PostMapping(value = "/update")
-    public Result update(@Validated(Update.class) @RequestBody ContractInfo contractInfo, BindingResult bindingResult) {
+    public NewDonResult update(@Validated(Update.class) @RequestBody ContractInfo contractInfo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
+            return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
         boolean b = this.contractInfoService.updateById(contractInfo);
         if (b) {
-            return Result.build(200, "OK", contractInfo.getId());
+            return NewDonResult.build(200, "OK", contractInfo.getId());
         } else {
-            return Result.build(500, "FAILED", null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 
     @PostMapping(value = "/delete")
-    public Result delete(@RequestParam("id") Long id) {
+    public NewDonResult delete(@RequestParam("id") Long id) {
         ContractInfo contractInfo = new ContractInfo();
         contractInfo.setId(id);
         contractInfo.setStatus(0);
         boolean b = this.contractInfoService.updateById(contractInfo);
         if (b) {
-            return Result.build(200, "OK", contractInfo.getId());
+            return NewDonResult.build(200, "OK", contractInfo.getId());
         } else {
-            return Result.build(500, "FAILED", null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 }

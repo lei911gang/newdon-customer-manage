@@ -3,7 +3,7 @@ package com.newdon.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.newdon.base.Insert;
-import com.newdon.base.Result;
+import com.newdon.base.NewDonResult;
 import com.newdon.base.Update;
 import com.newdon.entity.ClienteleTrade;
 import com.newdon.service.ClienteleTradeService;
@@ -29,7 +29,7 @@ public class ClienteleTradeController {
     private ClienteleTradeService clienteleTradeService;
 
     @PostMapping(value = "/query")
-    public Result query(ClienteleTrade clienteleTrade, Integer page, Integer rows) {
+    public NewDonResult query(ClienteleTrade clienteleTrade, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
         }
@@ -39,42 +39,42 @@ public class ClienteleTradeController {
         EntityWrapper<ClienteleTrade> wrapper = new EntityWrapper();
         wrapper.setEntity(clienteleTrade);
         Page<ClienteleTrade> pageInfo = this.clienteleTradeService.selectPage(new Page<>(page, rows), wrapper);
-        return Result.build(200, "OK", pageInfo);
+        return NewDonResult.build(200, "OK", pageInfo);
     }
 
     @PostMapping(value = "/insert")
-    public Result insert(@Validated(Insert.class) @RequestBody ClienteleTrade clienteleTrade, BindingResult bindingResult) {
+    public NewDonResult insert(@Validated(Insert.class) @RequestBody ClienteleTrade clienteleTrade, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
+            return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
         boolean insert = this.clienteleTradeService.insert(clienteleTrade);
         if (insert) {
-            return Result.build(200, "OK", clienteleTrade.getId());
+            return NewDonResult.build(200, "OK", clienteleTrade.getId());
         } else {
-            return Result.build(500, "FAILED", null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 
     @PostMapping(value = "/update")
-    public Result update(@Validated(Update.class) @RequestBody ClienteleTrade clienteleTrade, BindingResult bindingResult) {
+    public NewDonResult update(@Validated(Update.class) @RequestBody ClienteleTrade clienteleTrade, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return Result.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
+            return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
         boolean b = this.clienteleTradeService.updateById(clienteleTrade);
         if (b) {
-            return Result.build(200, "OK", clienteleTrade.getId());
+            return NewDonResult.build(200, "OK", clienteleTrade.getId());
         } else {
-            return Result.build(500, "FAILED", null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 
     @PostMapping(value = "/delete")
-    public Result delete(@RequestParam("id") Long id) {
+    public NewDonResult delete(@RequestParam("id") Long id) {
         boolean b = this.clienteleTradeService.deleteById(id);
         if (b) {
-            return Result.build(200, "OK", id);
+            return NewDonResult.build(200, "OK", id);
         } else {
-            return Result.build(500, "FAILED", null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 }
