@@ -33,7 +33,7 @@ public class ContractInfo implements Serializable {
 	private String incrementOfStockNumber;
 	private String newsFrom;
 	private String cooperativeEvaluator;
-	private Long procurementMethod;
+	private String procurementMethod;
 	private String clienteleName;
 	private String remark;
 	private Integer status;

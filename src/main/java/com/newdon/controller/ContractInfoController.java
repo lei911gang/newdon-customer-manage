@@ -109,31 +109,39 @@ public class ContractInfoController {
             throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert clienteleInfo failed!");
         }
         contractInfo.setStatus(1);
+        contractInfo.setClienteleName(contractInfo.getClienteleInfo().getClienteleName());
         boolean insert1 = this.contractInfoService.insert(contractInfo);
         if (!insert1) {
             throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert contractInfo failed!");
         }
         TechnologyInfo technologyInfo = contractInfo.getTechnologyInfo();
         technologyInfo.setStatus(1);
+        technologyInfo.setContractId(String.valueOf(contractInfo.getId()));
+        technologyInfo.setSystemLevelAndQuantity(String.valueOf(contractInfo.getId()));
+        technologyInfo.setDeviceInformationAndQuantity(String.valueOf(contractInfo.getId()));
         boolean insert2 = this.technologyInfoService.insert(technologyInfo);
         if (!insert2) {
             throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert technologyInfo failed!");
         }
         List<SystemLevelAndQuantity> systemLevelAndQuantities = contractInfo.getSystemLevelAndQuantities();
+        if (null != systemLevelAndQuantities && systemLevelAndQuantities.size() > 0) {
+            for (SystemLevelAndQuantity s : systemLevelAndQuantities) {
+                s.setContractId(contractInfo.getId());
+            }
+            boolean b = this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
+            if (!b) {
+                throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert systemLevelAndQuantities failed!");
+            }
+        }
         List<DeviceInformationAndQuantity> deviceInformationAndQuantities = contractInfo.getDeviceInformationAndQuantities();
-        for (SystemLevelAndQuantity s : systemLevelAndQuantities) {
-            s.setContractId(contractInfo.getId());
-        }
-        for (DeviceInformationAndQuantity s : deviceInformationAndQuantities) {
-            s.setContractId(contractInfo.getId());
-        }
-        boolean b = this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
-        if (!b) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert systemLevelAndQuantities failed!");
-        }
-        boolean b1 = this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
-        if (!b1) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert deviceInformationAndQuantities failed!");
+        if (null != deviceInformationAndQuantities && deviceInformationAndQuantities.size() > 0) {
+            for (DeviceInformationAndQuantity s : deviceInformationAndQuantities) {
+                s.setContractId(contractInfo.getId());
+            }
+            boolean b1 = this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
+            if (!b1) {
+                throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert deviceInformationAndQuantities failed!");
+            }
         }
         //插入客户信息和技术信息，以及系统级别和数量，设备信息和数量
         return NewDonResult.build(200, "OK", contractInfo.getId());
