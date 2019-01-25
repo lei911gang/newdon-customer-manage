@@ -29,7 +29,7 @@ public class ContractInfo implements Serializable {
 	private Long dateOfSignature;
 	private String businessPersonnel;
 	private Double contractSum;
-	private Integer serviceContent;
+	private String serviceContent;
 	private String incrementOfStockNumber;
 	private String newsFrom;
 	private String cooperativeEvaluator;
