@@ -32,7 +32,7 @@ public class TechnologyInfoServiceImpl extends ServiceImpl<TechnologyInfoMapper,
         Map<String, String> map = new HashMap<>();
         //TODO 查询出该合同ID所有的系统级别以及系统数量，合并为字符串
         SystemLevelAndQuantity s = new SystemLevelAndQuantity();
-        s.setContractId(Long.valueOf(contractId));
+        s.setContractId(contractId);
         List<SystemLevelAndQuantity> list = this.systemLevelAndQuantityService.selectList(new EntityWrapper<>(s));
         if (null != list && list.size() > 0) {
             StringBuilder str = new StringBuilder();
@@ -54,7 +54,7 @@ public class TechnologyInfoServiceImpl extends ServiceImpl<TechnologyInfoMapper,
         //TODO 查询出该合同ID所有的设备信息和数量，合并为字符串
         Map<String, String> map = new HashMap<>();
         DeviceInformationAndQuantity d = new DeviceInformationAndQuantity();
-        d.setContractId(Long.valueOf(contractId));
+        d.setContractId(contractId);
         List<DeviceInformationAndQuantity> list = this.deviceInformationAndQuantityService.selectList(new EntityWrapper<>(d));
         if (null != list && list.size() > 0) {
             StringBuilder str = new StringBuilder();

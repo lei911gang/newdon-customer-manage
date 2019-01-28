@@ -116,9 +116,9 @@ public class ContractInfoController {
         }
         TechnologyInfo technologyInfo = contractInfo.getTechnologyInfo();
         technologyInfo.setStatus(1);
-        technologyInfo.setContractId(String.valueOf(contractInfo.getId()));
-        technologyInfo.setSystemLevelAndQuantity(String.valueOf(contractInfo.getId()));
-        technologyInfo.setDeviceInformationAndQuantity(String.valueOf(contractInfo.getId()));
+        technologyInfo.setContractId(contractInfo.getContractId());
+        technologyInfo.setSystemLevelAndQuantity(String.valueOf(contractInfo.getContractId()));
+        technologyInfo.setDeviceInformationAndQuantity(String.valueOf(contractInfo.getContractId()));
         boolean insert2 = this.technologyInfoService.insert(technologyInfo);
         if (!insert2) {
             throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert technologyInfo failed!");
@@ -126,7 +126,7 @@ public class ContractInfoController {
         List<SystemLevelAndQuantity> systemLevelAndQuantities = contractInfo.getSystemLevelAndQuantities();
         if (null != systemLevelAndQuantities && systemLevelAndQuantities.size() > 0) {
             for (SystemLevelAndQuantity s : systemLevelAndQuantities) {
-                s.setContractId(contractInfo.getId());
+                s.setContractId(contractInfo.getContractId());
             }
             boolean b = this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
             if (!b) {
@@ -136,7 +136,7 @@ public class ContractInfoController {
         List<DeviceInformationAndQuantity> deviceInformationAndQuantities = contractInfo.getDeviceInformationAndQuantities();
         if (null != deviceInformationAndQuantities && deviceInformationAndQuantities.size() > 0) {
             for (DeviceInformationAndQuantity s : deviceInformationAndQuantities) {
-                s.setContractId(contractInfo.getId());
+                s.setContractId(contractInfo.getContractId());
             }
             boolean b1 = this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
             if (!b1) {

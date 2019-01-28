@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class DeviceInformationAndQuantity implements Serializable {
 	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
-	private Long contractId;
+	private String contractId;
 	private String deviceInfo;
 	private Integer deviceQuantity;
 	private String remark;

@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class NewdonApplication {
     public static void main(String[] args) {
-        System.out.println("......................");
         SpringApplication.run(NewdonApplication.class, args);
     }
 }

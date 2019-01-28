@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,20 +40,28 @@ public class ContractInfo implements Serializable {
 	private Integer status;
 
 	@TableField(exist = false)
+    @JsonIgnore
 	private ClienteleInfo clienteleInfo;
 	@TableField(exist = false)
+    @JsonIgnore
 	private TechnologyInfo technologyInfo;
 	@TableField(exist = false)
+    @JsonIgnore
 	private List<SystemLevelAndQuantity> systemLevelAndQuantities;
 	@TableField(exist = false)
+    @JsonIgnore
 	private List<DeviceInformationAndQuantity> deviceInformationAndQuantities;
 
 	@TableField(exist = false)
+    @JsonIgnore
 	private Long dateOfSignatureStart;
 	@TableField(exist = false)
+    @JsonIgnore
 	private Long dateOfSignatureStop;
 	@TableField(exist = false)
+    @JsonIgnore
 	private Double contractSumBegin;
 	@TableField(exist = false)
+    @JsonIgnore
 	private Double contractSumEnd;
 }

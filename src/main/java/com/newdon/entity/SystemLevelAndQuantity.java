@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class SystemLevelAndQuantity implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    private Long contractId;
+    private String contractId;
     private String systemLevel;
     private Integer systemQuantity;
     private String remark;
