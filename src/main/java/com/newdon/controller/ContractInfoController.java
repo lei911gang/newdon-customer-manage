@@ -9,6 +9,7 @@ import com.newdon.base.Update;
 import com.newdon.constants.CommonConstants;
 import com.newdon.entity.*;
 import com.newdon.service.*;
+import com.newdon.util.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LeiGang
@@ -93,6 +96,61 @@ public class ContractInfoController {
             average = sum / (records.size());
         }
         return NewDonResult.build(200, "OK", pageInfo, sum, average);
+    }
+
+    @PostMapping(value = "/queryBrokenLine")
+    public Map<Long,Double> queryBrokenLine(ContractInfo contractInfo) {
+        Map<Long, Double> map = new HashMap<>();
+        if (null != contractInfo.getDateOfSignatureStart() && null != contractInfo.getDateOfSignatureStop()) {
+            List<Long> monthBetween = TimeUtils.getMonthBetween(contractInfo.getDateOfSignatureStart(), contractInfo.getDateOfSignatureStop());
+            for (Long date : monthBetween) {
+                Long monthBegin = TimeUtils.getMonthBegin(date);
+                Long monthEnd = TimeUtils.getMonthEnd(date);
+                EntityWrapper<ContractInfo> wrapper = new EntityWrapper();
+                wrapper.eq("status", 1);
+                if (StringUtils.isNotBlank(contractInfo.getContractId())) {
+                    wrapper.like("contract_id", contractInfo.getContractId());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getContractCategory())) {
+                    wrapper.eq("contract_category", contractInfo.getContractCategory());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getBusinessPersonnel())) {
+                    wrapper.like("business_personnel", contractInfo.getBusinessPersonnel());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getIncrementOfStockNumber())) {
+                    wrapper.eq("increment_of_stock_number", contractInfo.getIncrementOfStockNumber());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getNewsFrom())) {
+                    wrapper.eq("news_from", contractInfo.getNewsFrom());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getCooperativeEvaluator())) {
+                    wrapper.eq("cooperative_evaluator", contractInfo.getCooperativeEvaluator());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getBusinessPersonnel())) {
+                    wrapper.like("business_personnel", contractInfo.getBusinessPersonnel());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getClienteleName())) {
+                    wrapper.like("clientele_name", contractInfo.getClienteleName());
+                }
+                //TODO 范围查询示例（时间段和数字）
+                if (null != contractInfo.getDateOfSignatureStart() && null != contractInfo.getDateOfSignatureStop()) {
+                    wrapper.between("date_of_signature", monthBegin, monthEnd);
+                }
+                if (null != contractInfo.getContractSumBegin() && null != contractInfo.getContractSumEnd()) {
+                    wrapper.between("contract_sum", contractInfo.getContractSumBegin(), contractInfo.getContractSumEnd());
+                }
+                List<ContractInfo> contractInfos = this.contractInfoService.selectList(wrapper);
+                //总金额和平均金额
+                Double sum = 0.0;
+                if (null != contractInfos && contractInfos.size() > 0) {
+                    for (ContractInfo contract : contractInfos) {
+                        sum = sum + contract.getContractSum();
+                    }
+                }
+                map.put(monthBegin, sum);
+            }
+        }
+        return map;
     }
 
     @PostMapping(value = "/insert")
