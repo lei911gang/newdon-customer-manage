@@ -118,6 +118,9 @@ public class LogAspect {
         sysLog.setTime(System.currentTimeMillis());
         String username = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
                 .getHeader("username");
+        if (StringUtils.isBlank(username)) {
+            username = (String) request.getSession().getAttribute("username");
+        }
         sysLog.setOperator(username);
         String[] split = url.split("/");
         List<String> list = Arrays.asList(split);
