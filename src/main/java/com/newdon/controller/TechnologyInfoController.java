@@ -3,10 +3,16 @@ package com.newdon.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.github.wxiaoqi.merge.core.MergeCore;
+import com.newdon.base.ContractInsertException;
 import com.newdon.base.Insert;
 import com.newdon.base.NewDonResult;
 import com.newdon.base.Update;
+import com.newdon.constants.CommonConstants;
+import com.newdon.entity.DeviceInformationAndQuantity;
+import com.newdon.entity.SystemLevelAndQuantity;
 import com.newdon.entity.TechnologyInfo;
+import com.newdon.service.DeviceInformationAndQuantityService;
+import com.newdon.service.SystemLevelAndQuantityService;
 import com.newdon.service.TechnologyInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @version 1.0
@@ -31,6 +39,10 @@ public class TechnologyInfoController {
     private TechnologyInfoService technologyInfoService;
     @Autowired
     private MergeCore mergeCore;
+    @Autowired
+    private SystemLevelAndQuantityService systemLevelAndQuantityService;
+    @Autowired
+    private DeviceInformationAndQuantityService deviceInformationAndQuantityService;
     @PostMapping(value = "/query")
     public NewDonResult query(TechnologyInfo technologyInfo, Integer page, Integer rows) {
         if (null == page || page < 0) {
@@ -50,6 +62,12 @@ public class TechnologyInfoController {
         }
         if (StringUtils.isNotBlank(technologyInfo.getTechnicist())) {
             wrapper.like("technicist", technologyInfo.getTechnicist());
+        }
+        if (StringUtils.isNotBlank(technologyInfo.getBasicEnvironment())) {
+            wrapper.eq("basic_environment", technologyInfo.getBasicEnvironment());
+        }
+        if (null != technologyInfo.getDateReleasedStart() && null != technologyInfo.getDateReleasedStop()) {
+            wrapper.between("date_released", technologyInfo.getDateReleasedStart(), technologyInfo.getDateReleasedStop());
         }
         Page<TechnologyInfo> pageInfo = this.technologyInfoService.selectPage(new Page<>(page, rows), wrapper);
         try {
@@ -80,6 +98,37 @@ public class TechnologyInfoController {
     public NewDonResult update(@Validated(Update.class) @RequestBody TechnologyInfo technologyInfo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
+        }
+        technologyInfo.setSystemLevelAndQuantity(technologyInfo.getContractId());
+        technologyInfo.setDeviceInformationAndQuantity(technologyInfo.getContractId());
+        //删除原来的关联
+        SystemLevelAndQuantity ss = new SystemLevelAndQuantity();
+        ss.setContractId(technologyInfo.getContractId());
+        DeviceInformationAndQuantity dd = new DeviceInformationAndQuantity();
+        dd.setContractId(technologyInfo.getContractId());
+        boolean delete = this.systemLevelAndQuantityService.delete(new EntityWrapper<>(ss));
+        log.info(delete+"");
+        boolean delete1 = this.deviceInformationAndQuantityService.delete(new EntityWrapper<>(dd));
+        log.info(delete1+"");
+        List<SystemLevelAndQuantity> systemLevelAndQuantities = technologyInfo.getSystemLevelAndQuantities();
+        if (null != systemLevelAndQuantities && systemLevelAndQuantities.size() > 0) {
+            for (SystemLevelAndQuantity s : systemLevelAndQuantities) {
+                s.setContractId(technologyInfo.getContractId());
+            }
+            boolean b = this.systemLevelAndQuantityService.insertBatch(systemLevelAndQuantities);
+            if (!b) {
+                throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert systemLevelAndQuantities failed!");
+            }
+        }
+        List<DeviceInformationAndQuantity> deviceInformationAndQuantities = technologyInfo.getDeviceInformationAndQuantities();
+        if (null != deviceInformationAndQuantities && deviceInformationAndQuantities.size() > 0) {
+            for (DeviceInformationAndQuantity s : deviceInformationAndQuantities) {
+                s.setContractId(technologyInfo.getContractId());
+            }
+            boolean b1 = this.deviceInformationAndQuantityService.insertBatch(deviceInformationAndQuantities);
+            if (!b1) {
+                throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert deviceInformationAndQuantities failed!");
+            }
         }
         boolean b = this.technologyInfoService.updateById(technologyInfo);
         if (b) {

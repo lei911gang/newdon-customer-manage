@@ -43,6 +43,12 @@ public class ClienteleInfoController {
         if (StringUtils.isNotBlank(clienteleInfo.getClienteleName())) {
             wrapper.like("clientele_name", clienteleInfo.getClienteleName());
         }
+        if (StringUtils.isNotBlank(clienteleInfo.getLinkman())) {
+            wrapper.like("linkman", clienteleInfo.getLinkman());
+        }
+        if (StringUtils.isNotBlank(clienteleInfo.getContact())) {
+            wrapper.like("contact", clienteleInfo.getContact());
+        }
         if (StringUtils.isNotBlank(clienteleInfo.getClienteleCategory())) {
             wrapper.eq("clientele_category", clienteleInfo.getClienteleCategory());
         }

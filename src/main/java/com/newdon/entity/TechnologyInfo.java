@@ -1,8 +1,10 @@
 package com.newdon.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.wxiaoqi.merge.annonation.MergeField;
 import com.newdon.service.TechnologyInfoService;
 import com.newdon.service.impl.TechnologyInfoServiceImpl;
@@ -11,6 +13,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
+
 /**
  * @author LeiGang
  * @create 2019/1/5 16:25
@@ -36,4 +40,17 @@ public class TechnologyInfo implements Serializable {
 	private Long dateReleased;
 	private String remark;
 	private Integer status;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private List<SystemLevelAndQuantity> systemLevelAndQuantities;
+    @TableField(exist = false)
+    @JsonIgnore
+    private List<DeviceInformationAndQuantity> deviceInformationAndQuantities;
+    @TableField(exist = false)
+    @JsonIgnore
+    private Long dateReleasedStart;
+    @TableField(exist = false)
+    @JsonIgnore
+    private Long dateReleasedStop;
 }
