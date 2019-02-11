@@ -102,6 +102,14 @@ public class ContractInfoController {
         if (bindingResult.hasErrors()) {
             return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
+        //检验合同编号
+        ContractInfo c = new ContractInfo();
+        c.setStatus(1);
+        c.setContractId(contractInfo.getContractId());
+        int i = this.contractInfoService.selectCount(new EntityWrapper<>(c));
+        if (i > 0) {
+            return NewDonResult.build(500, "合同编号已被占用!", contractInfo.getContractId());
+        }
         ClienteleInfo clienteleInfo = contractInfo.getClienteleInfo();
         clienteleInfo.setStatus(1);
         boolean insert = this.clienteleInfoService.insert(clienteleInfo);
