@@ -107,7 +107,8 @@ public class LogAspect {
             if (StringUtils.isNotBlank(args)) {
                 sysLog.setArgs(args);
             }
-            new SysLogCommand(sysLogMapper, sysLog).run();
+            Boolean run = new SysLogCommand(sysLogMapper, sysLog).run();
+            LOG.info(sysLog+""+run);
         }
         return result;
     }

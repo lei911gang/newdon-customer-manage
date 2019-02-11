@@ -3,6 +3,7 @@ package com.newdon.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.newdon.entity.SystemLog;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
 /**

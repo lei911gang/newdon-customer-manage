@@ -168,11 +168,17 @@ public class ContractInfoController {
         }
     }
 
+    @Autowired
+    private ClienteleInfoController clienteleInfoController;
+    @Autowired
+    private TechnologyInfoController technologyInfoController;
     @PostMapping(value = "/delete")
     public NewDonResult delete(@RequestParam("id") Long id) {
         ContractInfo contractInfo = new ContractInfo();
         contractInfo.setId(id);
         contractInfo.setStatus(0);
+        NewDonResult delete = clienteleInfoController.delete(id);
+        NewDonResult delete1 = technologyInfoController.delete(id);
         boolean b = this.contractInfoService.updateById(contractInfo);
         if (b) {
             return NewDonResult.build(200, "OK", contractInfo.getId());
