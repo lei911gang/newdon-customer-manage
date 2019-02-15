@@ -4,8 +4,9 @@
     <select id="queryDiagramWithBusinessPerson" resultType="com.newdon.bo.ContractDiagramBo">
         SELECT SUM(contract_sum) as contractSum,business_personnel as businessPersonnel from contract_info
         <where>
+            status = 1
             <if test="null != dateOfSignatureStart and null != dateOfSignatureStop">
-                date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
+                and date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
             </if>
         </where>
         GROUP BY business_personnel
@@ -13,13 +14,22 @@
     <select id="queryDiagramWithNewsFrom" resultType="com.newdon.bo.ContractDiagramBo">
         SELECT SUM(contract_sum) as contractSum,news_from as newsFrom from contract_info
         <where>
+            status = 1
             <if test="null != dateOfSignatureStart and null != dateOfSignatureStop">
-                date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
+            and date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
             </if>
         </where>
         GROUP BY news_from
     </select>
     <select id="queryDiagramWithRegion" resultType="com.newdon.bo.ContractDiagramBo">
-
+        SELECT SUM(contract_sum) as contractSum,clientele_info.clientele_region as clienteleRegion from contract_info
+        LEFT JOIN clientele_info ON contract_info.clientele_name=clientele_info.clientele_name
+        <where>
+            contract_info.status=1
+            <if test="null != dateOfSignatureStart and null != dateOfSignatureStop">
+            and date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
+            </if>
+        </where>
+        GROUP BY clientele_info.clientele_region
     </select>
 </mapper>

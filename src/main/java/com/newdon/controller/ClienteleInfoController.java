@@ -29,8 +29,8 @@ public class ClienteleInfoController {
     @Autowired
     private ClienteleInfoService clienteleInfoService;
 
-	@PostMapping(value = "/query")
-    public NewDonResult query(ClienteleInfo clienteleInfo, Integer page, Integer rows){
+    @PostMapping(value = "/query")
+    public NewDonResult query(ClienteleInfo clienteleInfo, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
         }
@@ -68,35 +68,41 @@ public class ClienteleInfoController {
         return NewDonResult.build(200, "OK", pageInfo);
     }
 
-	@PostMapping(value = "/insert")
-    public NewDonResult insert(@Validated(Insert.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return NewDonResult.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
+    @PostMapping(value = "/insert")
+    public NewDonResult insert(@Validated(Insert.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
         clienteleInfo.setStatus(1);
+        EntityWrapper<ClienteleInfo> wrapper = new EntityWrapper();
+        wrapper.eq("clientele_name", clienteleInfo.getClienteleName());
+        int i = this.clienteleInfoService.selectCount(wrapper);
+        if (i > 0) {
+            return NewDonResult.build(500, "FAILED", "客户已存在!");
+        }
         boolean insert = this.clienteleInfoService.insert(clienteleInfo);
         if (insert) {
             return NewDonResult.build(200, "OK", clienteleInfo.getId());
         } else {
-            return NewDonResult.build(500, "FAILED",null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 
-	@PostMapping(value = "/update")
-    public NewDonResult update(@Validated(Update.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return NewDonResult.build(400,"FAILED",bindingResult.getFieldError().getDefaultMessage());
+    @PostMapping(value = "/update")
+    public NewDonResult update(@Validated(Update.class) @RequestBody ClienteleInfo clienteleInfo, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
         boolean b = this.clienteleInfoService.updateById(clienteleInfo);
         if (b) {
             return NewDonResult.build(200, "OK", clienteleInfo.getId());
         } else {
-            return NewDonResult.build(500, "FAILED",null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 
-	@PostMapping(value = "/delete")
-    public NewDonResult delete(@RequestParam("id") Long id){
+    @PostMapping(value = "/delete")
+    public NewDonResult delete(@RequestParam("id") Long id) {
         ClienteleInfo clienteleInfo = new ClienteleInfo();
         clienteleInfo.setId(id);
         clienteleInfo.setStatus(0);
@@ -104,7 +110,7 @@ public class ClienteleInfoController {
         if (b) {
             return NewDonResult.build(200, "OK", clienteleInfo.getId());
         } else {
-            return NewDonResult.build(500, "FAILED",null);
+            return NewDonResult.build(500, "FAILED", null);
         }
     }
 }

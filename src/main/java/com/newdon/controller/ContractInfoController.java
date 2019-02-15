@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,14 +236,12 @@ public class ContractInfoController {
         contractInfo.setStatus(0);
         ContractInfo info = this.contractInfoService.selectById(id);
         if (null != info) {
-            ClienteleInfo clienteleInfo = new ClienteleInfo();
-            clienteleInfo.setClienteleName(info.getClienteleName());
-            clienteleInfo.setStatus(0);
-
-//            this.clienteleInfoService.update(clienteleInfo);
+            TechnologyInfo technologyInfo = new TechnologyInfo();
+            technologyInfo.setStatus(0);
+            TechnologyInfo technologyInfo1 = new TechnologyInfo();
+            technologyInfo1.setContractId(info.getContractId());
+            this.technologyInfoService.update(technologyInfo, new EntityWrapper<>(technologyInfo1));
         }
-//        NewDonResult delete = clienteleInfoController.delete(id);
-//        NewDonResult delete1 = technologyInfoController.delete(id);
         boolean b = this.contractInfoService.updateById(contractInfo);
         if (b) {
             return NewDonResult.build(200, "OK", contractInfo.getId());
@@ -258,13 +257,24 @@ public class ContractInfoController {
     public List<ContractDiagramBo> queryDiagramWithBusinessPerson(ContractDiagramBo contractDiagramBo) {
         return this.contractInfoMapper.queryDiagramWithBusinessPerson(contractDiagramBo);
     }
+
     @PostMapping(value = "/queryDiagramWithNewsFrom")
     public List<ContractDiagramBo> queryDiagramWithNewsFrom(ContractDiagramBo contractDiagramBo) {
         return this.contractInfoMapper.queryDiagramWithNewsFrom(contractDiagramBo);
     }
+
+    @Autowired
+    private RegionService regionService;
     @PostMapping(value = "/queryDiagramWithRegion")
     public List<ContractDiagramBo> queryDiagramWithRegion(ContractDiagramBo contractDiagramBo) {
         //TODO 上海北京按照区，其他按照省和主要城市
+        List<Region> regions = this.regionService.selectList(null);
+        List<String> list = new ArrayList<>();
+        for (Region region : regions) {
+            if (region.getRegionName().startsWith("上海市") || region.getRegionName().startsWith("北京市")) {
+
+            }
+        }
         return this.contractInfoMapper.queryDiagramWithRegion(contractDiagramBo);
     }
 }
