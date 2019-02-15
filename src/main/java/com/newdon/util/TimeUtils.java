@@ -91,7 +91,7 @@ public class TimeUtils {
             Long monthBegin = getMonthBegin(date);
             Long monthEnd = getMonthEnd(date);
             System.out.println(monthBegin + "==" + monthEnd);
-            sdf.format(monthBegin);
+            System.out.println(sdf.format(date));
             System.out.println(sdf.format(monthBegin)+"==="+sdf.format(monthEnd));
         }
     }

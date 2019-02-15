@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newdon.mapper.ContractInfoMapper">
+    <select id="queryDiagramWithBusinessPerson" resultType="com.newdon.bo.ContractDiagramBo">
+        SELECT SUM(contract_sum) as contractSum,business_personnel as businessPersonnel from contract_info
+        <where>
+            <if test="null != dateOfSignatureStart and null != dateOfSignatureStop">
+                date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
+            </if>
+        </where>
+        GROUP BY business_personnel
+    </select>
+    <select id="queryDiagramWithNewsFrom" resultType="com.newdon.bo.ContractDiagramBo">
+        SELECT SUM(contract_sum) as contractSum,news_from as newsFrom from contract_info
+        <where>
+            <if test="null != dateOfSignatureStart and null != dateOfSignatureStop">
+                date_of_signature BETWEEN #{dateOfSignatureStart} and #{dateOfSignatureStop}
+            </if>
+        </where>
+        GROUP BY news_from
+    </select>
+    <select id="queryDiagramWithRegion" resultType="com.newdon.bo.ContractDiagramBo">
+
+    </select>
+</mapper>

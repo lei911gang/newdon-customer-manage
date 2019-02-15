@@ -6,8 +6,10 @@ import com.newdon.base.ContractInsertException;
 import com.newdon.base.Insert;
 import com.newdon.base.NewDonResult;
 import com.newdon.base.Update;
+import com.newdon.bo.ContractDiagramBo;
 import com.newdon.constants.CommonConstants;
 import com.newdon.entity.*;
+import com.newdon.mapper.ContractInfoMapper;
 import com.newdon.service.*;
 import com.newdon.util.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +101,7 @@ public class ContractInfoController {
     }
 
     @PostMapping(value = "/queryBrokenLine")
-    public Map<Long,Double> queryBrokenLine(ContractInfo contractInfo) {
+    public Map<Long, Double> queryBrokenLine(ContractInfo contractInfo) {
         Map<Long, Double> map = new HashMap<>();
         if (null != contractInfo.getDateOfSignatureStart() && null != contractInfo.getDateOfSignatureStop()) {
             List<Long> monthBetween = TimeUtils.getMonthBetween(contractInfo.getDateOfSignatureStart(), contractInfo.getDateOfSignatureStop());
@@ -226,22 +228,43 @@ public class ContractInfoController {
         }
     }
 
-    @Autowired
-    private ClienteleInfoController clienteleInfoController;
-    @Autowired
-    private TechnologyInfoController technologyInfoController;
     @PostMapping(value = "/delete")
     public NewDonResult delete(@RequestParam("id") Long id) {
         ContractInfo contractInfo = new ContractInfo();
         contractInfo.setId(id);
         contractInfo.setStatus(0);
-        NewDonResult delete = clienteleInfoController.delete(id);
-        NewDonResult delete1 = technologyInfoController.delete(id);
+        ContractInfo info = this.contractInfoService.selectById(id);
+        if (null != info) {
+            ClienteleInfo clienteleInfo = new ClienteleInfo();
+            clienteleInfo.setClienteleName(info.getClienteleName());
+            clienteleInfo.setStatus(0);
+
+//            this.clienteleInfoService.update(clienteleInfo);
+        }
+//        NewDonResult delete = clienteleInfoController.delete(id);
+//        NewDonResult delete1 = technologyInfoController.delete(id);
         boolean b = this.contractInfoService.updateById(contractInfo);
         if (b) {
             return NewDonResult.build(200, "OK", contractInfo.getId());
         } else {
             return NewDonResult.build(500, "FAILED", null);
         }
+    }
+
+    @Autowired
+    private ContractInfoMapper contractInfoMapper;
+
+    @PostMapping(value = "/queryDiagramWithBusinessPerson")
+    public List<ContractDiagramBo> queryDiagramWithBusinessPerson(ContractDiagramBo contractDiagramBo) {
+        return this.contractInfoMapper.queryDiagramWithBusinessPerson(contractDiagramBo);
+    }
+    @PostMapping(value = "/queryDiagramWithNewsFrom")
+    public List<ContractDiagramBo> queryDiagramWithNewsFrom(ContractDiagramBo contractDiagramBo) {
+        return this.contractInfoMapper.queryDiagramWithNewsFrom(contractDiagramBo);
+    }
+    @PostMapping(value = "/queryDiagramWithRegion")
+    public List<ContractDiagramBo> queryDiagramWithRegion(ContractDiagramBo contractDiagramBo) {
+        //TODO 上海北京按照区，其他按照省和主要城市
+        return this.contractInfoMapper.queryDiagramWithRegion(contractDiagramBo);
     }
 }
