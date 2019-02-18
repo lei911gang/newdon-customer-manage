@@ -93,6 +93,16 @@ public class ClienteleInfoController {
         if (bindingResult.hasErrors()) {
             return NewDonResult.build(400, "FAILED", bindingResult.getFieldError().getDefaultMessage());
         }
+        //TODO 客户名称重复检测 不传则是不修改
+        if (StringUtils.isNotBlank(clienteleInfo.getClienteleName())) {
+            ClienteleInfo c = new ClienteleInfo();
+            c.setStatus(1);
+            c.setClienteleName(clienteleInfo.getClienteleName());
+            int i = this.clienteleInfoService.selectCount(new EntityWrapper<>(c));
+            if (i > 0) {
+                return NewDonResult.build(500, "客户名称已被占用!", clienteleInfo.getClienteleName());
+            }
+        }
         boolean b = this.clienteleInfoService.updateById(clienteleInfo);
         if (b) {
             return NewDonResult.build(200, "OK", clienteleInfo.getId());

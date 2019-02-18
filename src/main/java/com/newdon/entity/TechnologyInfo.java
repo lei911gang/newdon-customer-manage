@@ -40,6 +40,11 @@ public class TechnologyInfo implements Serializable {
     private Integer status;
 
     @TableField(exist = false)
+    private String systemLevel;
+    @TableField(exist = false)
+    private String deviceInfo;
+
+    @TableField(exist = false)
     private List<SystemLevelAndQuantity> systemLevelAndQuantities;
     @TableField(exist = false)
     private List<DeviceInformationAndQuantity> deviceInformationAndQuantities;

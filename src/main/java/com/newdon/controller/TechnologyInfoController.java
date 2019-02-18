@@ -3,14 +3,12 @@ package com.newdon.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.github.wxiaoqi.merge.core.MergeCore;
-import com.newdon.base.ContractInsertException;
-import com.newdon.base.Insert;
-import com.newdon.base.NewDonResult;
-import com.newdon.base.Update;
+import com.newdon.base.*;
 import com.newdon.constants.CommonConstants;
 import com.newdon.entity.DeviceInformationAndQuantity;
 import com.newdon.entity.SystemLevelAndQuantity;
 import com.newdon.entity.TechnologyInfo;
+import com.newdon.mapper.TechnologyInfoMapper;
 import com.newdon.service.DeviceInformationAndQuantityService;
 import com.newdon.service.SystemLevelAndQuantityService;
 import com.newdon.service.TechnologyInfoService;
@@ -38,13 +36,16 @@ public class TechnologyInfoController {
     @Autowired
     private TechnologyInfoService technologyInfoService;
     @Autowired
+    private TechnologyInfoMapper technologyInfoMapper;
+    @Autowired
     private MergeCore mergeCore;
     @Autowired
     private SystemLevelAndQuantityService systemLevelAndQuantityService;
     @Autowired
     private DeviceInformationAndQuantityService deviceInformationAndQuantityService;
+
     @PostMapping(value = "/query")
-    public NewDonResult query(TechnologyInfo technologyInfo, Integer page, Integer rows) {
+    public NewDonTechResult query(TechnologyInfo technologyInfo, Integer page, Integer rows) {
         if (null == page || page < 0) {
             page = 1;
         }
@@ -77,7 +78,36 @@ public class TechnologyInfoController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return NewDonResult.build(200, "OK", pageInfo);
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(technologyInfo.getDeviceInfo())) {
+            List<DeviceInformationAndQuantity> list = this.technologyInfoMapper.queryDevices(technologyInfo);
+            sb.append(technologyInfo.getDeviceInfo()).append(":");
+            int sum = 0;
+            if (null != list && list.size() > 0) {
+                for (DeviceInformationAndQuantity d : list) {
+                    if (technologyInfo.getDeviceInfo().equals(d.getDeviceInfo())) {
+                        //只统计查询的那一类
+                        sum = sum + d.getDeviceQuantity();
+                    }
+                }
+            }
+            sb.append(sum).append(" ");
+        }
+        if (StringUtils.isNotBlank(technologyInfo.getSystemLevel())) {
+            List<SystemLevelAndQuantity> list = this.technologyInfoMapper.querySystems(technologyInfo);
+            sb.append(technologyInfo.getSystemLevel()).append(":");
+            int sum = 0;
+            if (null != list && list.size() > 0) {
+                for (SystemLevelAndQuantity s : list) {
+                    if (technologyInfo.getSystemLevel().equals(s.getSystemLevel())) {
+                        //只统计查询的那一类
+                        sum = sum + s.getSystemQuantity();
+                    }
+                }
+            }
+            sb.append(sum);
+        }
+        return NewDonTechResult.build(200, "OK", pageInfo, sb.toString());
     }
 
     @PostMapping(value = "/insert")
@@ -107,9 +137,9 @@ public class TechnologyInfoController {
         DeviceInformationAndQuantity dd = new DeviceInformationAndQuantity();
         dd.setContractId(technologyInfo.getContractId());
         boolean delete = this.systemLevelAndQuantityService.delete(new EntityWrapper<>(ss));
-        log.info(delete+"");
+        log.info(delete + "");
         boolean delete1 = this.deviceInformationAndQuantityService.delete(new EntityWrapper<>(dd));
-        log.info(delete1+"");
+        log.info(delete1 + "");
         List<SystemLevelAndQuantity> systemLevelAndQuantities = technologyInfo.getSystemLevelAndQuantities();
         if (null != systemLevelAndQuantities && systemLevelAndQuantities.size() > 0) {
             for (SystemLevelAndQuantity s : systemLevelAndQuantities) {

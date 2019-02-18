@@ -129,6 +129,12 @@ public class ContractInfoController {
                 if (StringUtils.isNotBlank(contractInfo.getCooperativeEvaluator())) {
                     wrapper.eq("cooperative_evaluator", contractInfo.getCooperativeEvaluator());
                 }
+                if (StringUtils.isNotBlank(contractInfo.getServiceContent())) {
+                    wrapper.eq("service_content", contractInfo.getServiceContent());
+                }
+                if (StringUtils.isNotBlank(contractInfo.getProcurementMethod())) {
+                    wrapper.eq("procurement_method", contractInfo.getProcurementMethod());
+                }
                 if (StringUtils.isNotBlank(contractInfo.getBusinessPersonnel())) {
                     wrapper.like("business_personnel", contractInfo.getBusinessPersonnel());
                 }
@@ -171,12 +177,12 @@ public class ContractInfoController {
         if (i > 0) {
             return NewDonResult.build(500, "合同编号已被占用!", contractInfo.getContractId());
         }
-        ClienteleInfo clienteleInfo = contractInfo.getClienteleInfo();
-        clienteleInfo.setStatus(1);
-        boolean insert = this.clienteleInfoService.insert(clienteleInfo);
-        if (!insert) {
-            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert clienteleInfo failed!");
-        }
+//        ClienteleInfo clienteleInfo = contractInfo.getClienteleInfo();
+//        clienteleInfo.setStatus(1);
+//        boolean insert = this.clienteleInfoService.insert(clienteleInfo);
+//        if (!insert) {
+//            throw new ContractInsertException(CommonConstants.EX_OTHER_CODE, "insert clienteleInfo failed!");
+//        }
         contractInfo.setStatus(1);
         contractInfo.setClienteleName(contractInfo.getClienteleInfo().getClienteleName());
         boolean insert1 = this.contractInfoService.insert(contractInfo);
