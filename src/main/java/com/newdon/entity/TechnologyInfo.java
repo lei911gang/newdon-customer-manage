@@ -43,6 +43,10 @@ public class TechnologyInfo implements Serializable {
     private String systemLevel;
     @TableField(exist = false)
     private String deviceInfo;
+    @TableField(exist = false)
+    private Integer page;
+    @TableField(exist = false)
+    private Integer rows;
 
     @TableField(exist = false)
     private List<SystemLevelAndQuantity> systemLevelAndQuantities;

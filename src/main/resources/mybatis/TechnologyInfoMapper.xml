@@ -2,10 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.newdon.mapper.TechnologyInfoMapper">
 
-    <select id="queryDevices" resultType="com.newdon.entity.DeviceInformationAndQuantity">
-        SELECT device_information_and_quantity.device_info as deviceInfo,device_information_and_quantity.device_quantity as deviceQuantity from technology_info
-        RIGHT JOIN device_information_and_quantity ON
+    <select id="queryDevices" resultType="com.newdon.bo.DeviceAndSystemBo">
+        SELECT device_information_and_quantity.device_info as deviceInfo,
+        device_information_and_quantity.device_quantity as deviceQuantity,
+        system_level_and_quantity.system_level as systemLevel,
+        system_level_and_quantity.system_quantity as systemQuantity
+        from technology_info
+        LEFT JOIN device_information_and_quantity ON
         technology_info.contract_id=device_information_and_quantity.contract_id
+        LEFT JOIN system_level_and_quantity ON
+        technology_info.contract_id=system_level_and_quantity.contract_id
         <where>
             technology_info.status=1
             <if test="null != contractId">
@@ -26,11 +32,16 @@
             <if test="null != deviceInfo">
                 and device_information_and_quantity.device_info=#{deviceInfo}
             </if>
+            <if test="null != systemLevel">
+                and system_level_and_quantity.system_level=#{systemLevel}
+            </if>
         </where>
     </select>
     <select id="querySystems" resultType="com.newdon.entity.SystemLevelAndQuantity">
-        SELECT system_level_and_quantity.system_level as systemLevel,system_level_and_quantity.system_quantity as systemQuantity from technology_info
-        RIGHT JOIN system_level_and_quantity ON
+        SELECT system_level_and_quantity.system_level as systemLevel,
+        system_level_and_quantity.system_quantity as systemQuantity
+        from technology_info
+        LEFT JOIN system_level_and_quantity ON
         technology_info.contract_id=system_level_and_quantity.contract_id
         <where>
             technology_info.status=1
@@ -48,6 +59,80 @@
             </if>
             <if test="null != dateReleasedStart and null != dateReleasedStop">
                 and technology_info.date_released BETWEEN #{dateReleasedStart} and #{dateReleasedStop}
+            </if>
+            <if test="null != systemLevel">
+                and system_level_and_quantity.system_level=#{systemLevel}
+            </if>
+        </where>
+    </select>
+    <select id="queryList" resultType="com.newdon.entity.TechnologyInfo">
+        SELECT technology_info.id as id,
+        technology_info.contract_id as contractId,
+        technology_info.project_manager as projectManager,
+        technology_info.technicist as technicist,
+        technology_info.basic_environment as basicEnvironment,
+        technology_info.system_level_and_quantity as systemLevelAndQuantity,
+        technology_info.device_information_and_quantity as deviceInformationAndQuantity,
+        technology_info.date_released as dateReleased,
+        technology_info.remark as remark,
+        technology_info.status as status
+        from technology_info
+        LEFT JOIN device_information_and_quantity ON
+        technology_info.contract_id=device_information_and_quantity.contract_id
+        LEFT JOIN system_level_and_quantity ON
+        technology_info.contract_id=system_level_and_quantity.contract_id
+        <where>
+            technology_info.status=1
+            <if test="null != contractId">
+                and technology_info.contract_id=#{contractId}
+            </if>
+            <if test="null != projectManager">
+                and technology_info.project_manager=#{projectManager}
+            </if>
+            <if test="null != technicist">
+                and technology_info.technicist=#{technicist}
+            </if>
+            <if test="null != basicEnvironment">
+                and technology_info.basic_environment=#{basicEnvironment}
+            </if>
+            <if test="null != dateReleasedStart and null != dateReleasedStop">
+                and technology_info.date_released BETWEEN #{dateReleasedStart} and #{dateReleasedStop}
+            </if>
+            <if test="null != deviceInfo">
+                and device_information_and_quantity.device_info=#{deviceInfo}
+            </if>
+            <if test="null != systemLevel">
+                and system_level_and_quantity.system_level=#{systemLevel}
+            </if>
+        </where>
+        LIMIT ${(page-1)*rows},${rows}
+    </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        SELECT count(1)
+        from technology_info
+        LEFT JOIN device_information_and_quantity ON
+        technology_info.contract_id=device_information_and_quantity.contract_id
+        LEFT JOIN system_level_and_quantity ON
+        technology_info.contract_id=system_level_and_quantity.contract_id
+        <where>
+            technology_info.status=1
+            <if test="null != contractId">
+                and technology_info.contract_id=#{contractId}
+            </if>
+            <if test="null != projectManager">
+                and technology_info.project_manager=#{projectManager}
+            </if>
+            <if test="null != technicist">
+                and technology_info.technicist=#{technicist}
+            </if>
+            <if test="null != basicEnvironment">
+                and technology_info.basic_environment=#{basicEnvironment}
+            </if>
+            <if test="null != dateReleasedStart and null != dateReleasedStop">
+                and technology_info.date_released BETWEEN #{dateReleasedStart} and #{dateReleasedStop}
+            </if>
+            <if test="null != deviceInfo">
+                and device_information_and_quantity.device_info=#{deviceInfo}
             </if>
             <if test="null != systemLevel">
                 and system_level_and_quantity.system_level=#{systemLevel}

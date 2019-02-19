@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.github.wxiaoqi.merge.core.MergeCore;
 import com.newdon.base.*;
+import com.newdon.bo.DeviceAndSystemBo;
 import com.newdon.constants.CommonConstants;
 import com.newdon.entity.DeviceInformationAndQuantity;
 import com.newdon.entity.SystemLevelAndQuantity;
@@ -19,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,25 +54,34 @@ public class TechnologyInfoController {
         if (null == rows || rows < 0) {
             rows = 10;
         }
-//        technologyInfo.setStatus(1);
-        EntityWrapper<TechnologyInfo> wrapper = new EntityWrapper();
-        wrapper.eq("status", 1);
-        if (StringUtils.isNotBlank(technologyInfo.getContractId())) {
-            wrapper.like("contract_id", technologyInfo.getContractId());
+//        EntityWrapper<TechnologyInfo> wrapper = new EntityWrapper();
+//        wrapper.eq("status", 1);
+//        if (StringUtils.isNotBlank(technologyInfo.getContractId())) {
+//            wrapper.like("contract_id", technologyInfo.getContractId());
+//        }
+//        if (StringUtils.isNotBlank(technologyInfo.getProjectManager())) {
+//            wrapper.like("project_manager", technologyInfo.getProjectManager());
+//        }
+//        if (StringUtils.isNotBlank(technologyInfo.getTechnicist())) {
+//            wrapper.like("technicist", technologyInfo.getTechnicist());
+//        }
+//        if (StringUtils.isNotBlank(technologyInfo.getBasicEnvironment())) {
+//            wrapper.eq("basic_environment", technologyInfo.getBasicEnvironment());
+//        }
+//        if (null != technologyInfo.getDateReleasedStart() && null != technologyInfo.getDateReleasedStop()) {
+//            wrapper.between("date_released", technologyInfo.getDateReleasedStart(), technologyInfo.getDateReleasedStop());
+//        }
+        technologyInfo.setPage(page);
+        technologyInfo.setRows(rows);
+        List<TechnologyInfo> technologyInfos = this.technologyInfoMapper.queryList(technologyInfo);
+        Page<TechnologyInfo> pageInfo = new Page<>();
+        pageInfo.setTotal(this.technologyInfoMapper.getTotal(technologyInfo));
+        pageInfo.setSize(rows);
+        pageInfo.setCurrent(page);
+        if (null != technologyInfos.get(0).getId()) {
+            pageInfo.setRecords(technologyInfos);
         }
-        if (StringUtils.isNotBlank(technologyInfo.getProjectManager())) {
-            wrapper.like("project_manager", technologyInfo.getProjectManager());
-        }
-        if (StringUtils.isNotBlank(technologyInfo.getTechnicist())) {
-            wrapper.like("technicist", technologyInfo.getTechnicist());
-        }
-        if (StringUtils.isNotBlank(technologyInfo.getBasicEnvironment())) {
-            wrapper.eq("basic_environment", technologyInfo.getBasicEnvironment());
-        }
-        if (null != technologyInfo.getDateReleasedStart() && null != technologyInfo.getDateReleasedStop()) {
-            wrapper.between("date_released", technologyInfo.getDateReleasedStart(), technologyInfo.getDateReleasedStop());
-        }
-        Page<TechnologyInfo> pageInfo = this.technologyInfoService.selectPage(new Page<>(page, rows), wrapper);
+//        Page<TechnologyInfo> pageInfo = this.technologyInfoService.selectPage(new Page<>(page, rows), wrapper);
         try {
             if (!pageInfo.getRecords().isEmpty()) {
                 mergeCore.mergeResult(TechnologyInfo.class, pageInfo.getRecords());
@@ -78,13 +89,16 @@ public class TechnologyInfoController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        List<DeviceAndSystemBo> list = new ArrayList<>();
+        if (StringUtils.isNotBlank(technologyInfo.getDeviceInfo()) || StringUtils.isNotBlank(technologyInfo.getSystemLevel())) {
+            list = this.technologyInfoMapper.queryDevices(technologyInfo);
+        }
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotBlank(technologyInfo.getDeviceInfo())) {
-            List<DeviceInformationAndQuantity> list = this.technologyInfoMapper.queryDevices(technologyInfo);
             sb.append(technologyInfo.getDeviceInfo()).append(":");
             int sum = 0;
             if (null != list && list.size() > 0) {
-                for (DeviceInformationAndQuantity d : list) {
+                for (DeviceAndSystemBo d : list) {
                     if (technologyInfo.getDeviceInfo().equals(d.getDeviceInfo())) {
                         //只统计查询的那一类
                         sum = sum + d.getDeviceQuantity();
@@ -94,11 +108,10 @@ public class TechnologyInfoController {
             sb.append(sum).append(" ");
         }
         if (StringUtils.isNotBlank(technologyInfo.getSystemLevel())) {
-            List<SystemLevelAndQuantity> list = this.technologyInfoMapper.querySystems(technologyInfo);
             sb.append(technologyInfo.getSystemLevel()).append(":");
             int sum = 0;
             if (null != list && list.size() > 0) {
-                for (SystemLevelAndQuantity s : list) {
+                for (DeviceAndSystemBo s : list) {
                     if (technologyInfo.getSystemLevel().equals(s.getSystemLevel())) {
                         //只统计查询的那一类
                         sum = sum + s.getSystemQuantity();
