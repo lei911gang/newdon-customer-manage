@@ -78,9 +78,7 @@ public class TechnologyInfoController {
         pageInfo.setTotal(this.technologyInfoMapper.getTotal(technologyInfo));
         pageInfo.setSize(rows);
         pageInfo.setCurrent(page);
-        if (null != technologyInfos.get(0).getId()) {
-            pageInfo.setRecords(technologyInfos);
-        }
+        pageInfo.setRecords(technologyInfos);
 //        Page<TechnologyInfo> pageInfo = this.technologyInfoService.selectPage(new Page<>(page, rows), wrapper);
         try {
             if (!pageInfo.getRecords().isEmpty()) {
