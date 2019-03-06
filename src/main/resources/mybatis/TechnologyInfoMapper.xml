@@ -66,7 +66,7 @@
         </where>
     </select>
     <select id="queryList" resultType="com.newdon.entity.TechnologyInfo">
-        SELECT technology_info.id as id,
+        SELECT DISTINCT technology_info.id as id,
         technology_info.contract_id as contractId,
         technology_info.project_manager as projectManager,
         technology_info.technicist as technicist,
