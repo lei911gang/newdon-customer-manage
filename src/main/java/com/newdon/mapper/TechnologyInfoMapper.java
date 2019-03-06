@@ -17,5 +17,5 @@ public interface TechnologyInfoMapper extends BaseMapper<TechnologyInfo> {
 
     List<TechnologyInfo> queryList(TechnologyInfo technologyInfo);
 
-    Integer getTotal(TechnologyInfo technologyInfo);
+    List<Long> getTotal(TechnologyInfo technologyInfo);
 }

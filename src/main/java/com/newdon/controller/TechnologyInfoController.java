@@ -75,7 +75,7 @@ public class TechnologyInfoController {
         technologyInfo.setRows(rows);
         List<TechnologyInfo> technologyInfos = this.technologyInfoMapper.queryList(technologyInfo);
         Page<TechnologyInfo> pageInfo = new Page<>();
-        pageInfo.setTotal(this.technologyInfoMapper.getTotal(technologyInfo));
+        pageInfo.setTotal(this.technologyInfoMapper.getTotal(technologyInfo).size());
         pageInfo.setSize(rows);
         pageInfo.setCurrent(page);
         pageInfo.setRecords(technologyInfos);

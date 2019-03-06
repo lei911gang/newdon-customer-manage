@@ -107,8 +107,8 @@
         </where>
         LIMIT ${(page-1)*rows},${rows}
     </select>
-    <select id="getTotal" resultType="java.lang.Integer">
-        SELECT count(1)
+    <select id="getTotal" resultType="java.lang.Long">
+        SELECT DISTINCT technology_info.id
         from technology_info
         LEFT JOIN device_information_and_quantity ON
         technology_info.contract_id=device_information_and_quantity.contract_id
