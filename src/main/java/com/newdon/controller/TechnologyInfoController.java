@@ -56,15 +56,6 @@ public class TechnologyInfoController {
         }
 //        EntityWrapper<TechnologyInfo> wrapper = new EntityWrapper();
 //        wrapper.eq("status", 1);
-//        if (StringUtils.isNotBlank(technologyInfo.getContractId())) {
-//            wrapper.like("contract_id", technologyInfo.getContractId());
-//        }
-//        if (StringUtils.isNotBlank(technologyInfo.getProjectManager())) {
-//            wrapper.like("project_manager", technologyInfo.getProjectManager());
-//        }
-//        if (StringUtils.isNotBlank(technologyInfo.getTechnicist())) {
-//            wrapper.like("technicist", technologyInfo.getTechnicist());
-//        }
 //        if (StringUtils.isNotBlank(technologyInfo.getBasicEnvironment())) {
 //            wrapper.eq("basic_environment", technologyInfo.getBasicEnvironment());
 //        }
@@ -73,6 +64,15 @@ public class TechnologyInfoController {
 //        }
         technologyInfo.setPage(page);
         technologyInfo.setRows(rows);
+        if (StringUtils.isNotBlank(technologyInfo.getContractId())) {
+            technologyInfo.setContractId("%\\" + technologyInfo.getContractId() + "%");
+        }
+        if (StringUtils.isNotBlank(technologyInfo.getProjectManager())) {
+            technologyInfo.setProjectManager("%\\" + technologyInfo.getProjectManager() + "%");
+        }
+        if (StringUtils.isNotBlank(technologyInfo.getTechnicist())) {
+            technologyInfo.setTechnicist("%\\" + technologyInfo.getTechnicist() + "%");
+        }
         List<TechnologyInfo> technologyInfos = this.technologyInfoMapper.queryList(technologyInfo);
         Page<TechnologyInfo> pageInfo = new Page<>();
         pageInfo.setTotal(this.technologyInfoMapper.getTotal(technologyInfo).size());

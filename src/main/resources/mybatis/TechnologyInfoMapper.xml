@@ -84,13 +84,13 @@
         <where>
             technology_info.status=1
             <if test="null != contractId">
-                and technology_info.contract_id=#{contractId}
+                and technology_info.contract_id like #{contractId}
             </if>
             <if test="null != projectManager">
-                and technology_info.project_manager=#{projectManager}
+                and technology_info.project_manager like #{projectManager}
             </if>
             <if test="null != technicist">
-                and technology_info.technicist=#{technicist}
+                and technology_info.technicist like #{technicist}
             </if>
             <if test="null != basicEnvironment">
                 and technology_info.basic_environment=#{basicEnvironment}
