@@ -22,7 +22,7 @@ spring:
 #    default-property-inclusion: non_null
   datasource:
     name: test
-    url: jdbc:mysql://${db.ip:47.98.111.63}:3306/newdon?useUnicode=true&characterEncoding=UTF8&useSSL=false
+    url: jdbc:mysql://${db.ip:119.28.180.186}:3306/newdon?useUnicode=true&characterEncoding=UTF8&useSSL=false
     username: ${db.username:root}
     password: root123
     type: com.alibaba.druid.pool.DruidDataSource
