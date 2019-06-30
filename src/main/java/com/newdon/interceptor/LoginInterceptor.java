@@ -25,9 +25,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String basePath = request.getContextPath();
         String path = request.getRequestURI();
-//        if (!doLoginInterceptor(path, basePath)) {//是否进行登陆拦截
-//            return true;
-//        }
+        if (!doLoginInterceptor(path, basePath)) {//是否进行登陆拦截
+            return true;
+        }
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
         // 检查每个到来的请求对应的session域中是否有登录标识
         Object username = request.getSession().getAttribute("username");
         if (null == username || !(username instanceof String)) {
@@ -83,7 +86,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         //设置不进行登录拦截的路径：登录注册和验证码
         //notLoginPaths.add("/");
         notLoginPaths.add("/login");
-        notLoginPaths.add("/getin");
+        notLoginPaths.add("/getCurrentUser");
+        notLoginPaths.add("/logout");
         if (notLoginPaths.contains(path)) {
             return false;
         }

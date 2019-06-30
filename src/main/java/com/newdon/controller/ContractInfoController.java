@@ -80,6 +80,9 @@ public class ContractInfoController {
         if (StringUtils.isNotBlank(contractInfo.getClienteleName())) {
             wrapper.like("clientele_name", contractInfo.getClienteleName());
         }
+        if (StringUtils.isNotBlank(contractInfo.getProcurementMethod())) {
+            wrapper.eq("procurement_method", contractInfo.getProcurementMethod());
+        }
         //TODO 范围查询示例（时间段和数字）
         if (null != contractInfo.getDateOfSignatureStart() && null != contractInfo.getDateOfSignatureStop()) {
             wrapper.between("date_of_signature", contractInfo.getDateOfSignatureStart(), contractInfo.getDateOfSignatureStop());
