@@ -105,6 +105,7 @@
                 and system_level_and_quantity.system_level=#{systemLevel}
             </if>
         </where>
+--         order by technology_info.contract_id asc
         LIMIT ${(page-1)*rows},${rows}
     </select>
     <select id="getTotal" resultType="java.lang.Long">

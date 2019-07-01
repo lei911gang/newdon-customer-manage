@@ -20,10 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author LeiGang
@@ -59,6 +56,7 @@ public class ContractInfoController {
         if (StringUtils.isNotBlank(contractInfo.getContractId())) {
             wrapper.like("contract_id", contractInfo.getContractId());
         }
+        wrapper.orderAsc(Collections.singleton("contract_id"));
         if (StringUtils.isNotBlank(contractInfo.getContractCategory())) {
             wrapper.eq("contract_category", contractInfo.getContractCategory());
         }

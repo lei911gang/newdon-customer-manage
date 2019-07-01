@@ -67,7 +67,7 @@ public class TechnologyInfoServiceImpl extends ServiceImpl<TechnologyInfoMapper,
                 for (DeviceInformationAndQuantity di : list) {
                     String deviceInfo = di.getDeviceInfo();
                     Integer deviceQuantity = di.getDeviceQuantity();
-                    str.append(deviceInfo).append("=").append(deviceQuantity).append("套").append(",");
+                    str.append(deviceInfo).append("=").append(deviceQuantity).append("个").append(",");
                 }
                 map.put(split[i], str.toString());
             } else {
