@@ -36,7 +36,7 @@
 		<cglib-nodep.version>3.1</cglib-nodep.version>
 		<spring-boot.version>1.5.6.RELEASE</spring-boot.version>
 		<spring-context-support.version>5.0.7.RELEASE</spring-context-support.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<mysql-connector.version>5.1.46</mysql-connector.version>
 	</properties>
 	<dependencies>
